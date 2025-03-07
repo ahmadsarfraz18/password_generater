@@ -2,47 +2,50 @@ import streamlit as st
 import random
 import string
 
-def generate_password(length, include_special, include_numbers, include_ascii):
-    chars = ''
-    if include_ascii:
-        chars += string.ascii_letters
-    if include_numbers:
-        chars += string.digits
-    if include_special:
-        chars += string.punctuation
+# --- APP TITLE ---
+st.set_page_config(page_title="Password Generator & Strength Meter", layout="wide")
+st.title("🔐 Password Generator & Strength Meter")
+
+# --- PASSWORD GENERATION FUNCTION ---
+def generate_password(length, use_special, use_numbers, use_letters):
+    characters = ""
+    if use_special:
+        characters += string.punctuation  # Special characters like @, #, $
+    if use_numbers:
+        characters += string.digits  # Numbers 0-9
+    if use_letters:
+        characters += string.ascii_letters  # A-Z, a-z
     
-    if not chars:
+    if not characters:
         return "Please select at least one option!"
     
-    return ''.join(random.choice(chars) for _ in range(length))
+    return "".join(random.choice(characters) for _ in range(length))
 
-# Streamlit UI
-st.set_page_config(page_title="Password Generator & Meter", layout="wide")
-st.sidebar.title("Options")
-
-# Sidebar options
-length = st.sidebar.slider("Select Password Length", min_value=6, max_value=32, value=12)
-include_special = st.sidebar.checkbox("Include Special Characters")
-include_numbers = st.sidebar.checkbox("Include Numbers")
-include_ascii = st.sidebar.checkbox("Include ASCII Letters", value=True)
-
-if st.sidebar.button("Generate Password"):
-    password = generate_password(length, include_special, include_numbers, include_ascii)
-    st.write("### Generated Password:")
-    st.code(password, language="")
-
-# Simple Chatbot Functionality
-def chatbot_response(user_input):
-    responses = {
-        "hello": "Hi there! How can I help you?",
-        "how are you": "I'm just a bot, but I'm doing great!",
-        "generate password": "Go to the sidebar and click the generate button!",
-        "bye": "Goodbye! Have a great day!"
-    }
-    return responses.get(user_input.lower(), "I'm not sure how to respond to that.")
-
-st.sidebar.write("### Chatbot")
-user_input = st.sidebar.text_input("Ask me something:")
+# --- SIDEBAR ---
+st.sidebar.header("Chatbot 🤖")
+st.sidebar.write("Yahan aap chatbot se baat kar sakte hain!")
+user_input = st.sidebar.text_input("Aap ka sawal: ")
 if user_input:
-    response = chatbot_response(user_input)
-    st.sidebar.write(response)
+    st.sidebar.write("Chatbot ka jawab: Sorry, ye feature abhi under development hai!")
+
+# --- PASSWORD SETTINGS ---
+st.subheader("⚙️ Customize Your Password")
+password_length = st.slider("Password Length", min_value=4, max_value=32, value=12)
+use_special = st.checkbox("Include Special Characters (@, #, $)")
+use_numbers = st.checkbox("Include Numbers (0-9)")
+use_letters = st.checkbox("Include ASCII Letters (A-Z, a-z)", value=True)
+
+if st.button("Generate Password"):
+    password = generate_password(password_length, use_special, use_numbers, use_letters)
+    st.success(f"Your Generated Password: `{password}`")
+    
+    # Password Strength Meter
+    if len(password) < 8:
+        st.error("Weak Password ❌")
+    elif len(password) < 12:
+        st.warning("Moderate Password ⚠️")
+    else:
+        st.success("Strong Password ✅")
+
+# --- FOOTER ---
+st.write("💡 Tip: Always use a strong password to secure your accounts!")
