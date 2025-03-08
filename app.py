@@ -74,7 +74,7 @@ else:
 
 if st.sidebar.button("Toggle Dark Mode"):
     st.session_state.dark_mode = not st.session_state.dark_mode
-    st.experimental_rerun()
+    st.rerun()  # Use st.rerun() instead of st.experimental_rerun()
 
 st.title("Secure Password Generator")
 
